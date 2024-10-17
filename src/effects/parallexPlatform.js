@@ -27,7 +27,7 @@ export function platformUpdate(platformFrames) {
     platformFrames[1].moveTo(platformFrames[0].pos.x + gameSettings.platform.width * gameSettings.platform.frames, 450)
 }
 
-export const parallaxplatformPeices = [
+export const parallaxPlatformPeices = [
     platformParallaxFirstFrame(),
     platformParallaxSecondFrame()
 ]

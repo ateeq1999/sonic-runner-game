@@ -21,12 +21,12 @@ export function bgParallaxSecondFrame() {
 
 export function bgUpdate(bgFrames) {
     if (bgFrames[1].pos.x < 0) {
-        bgFrames[0].moveTo(bgFrames[1].pos.x + gameSettings.bg.width * 2, 0)
+        bgFrames[0].moveTo(bgFrames[1].pos.x + gameSettings.bg.width * gameSettings.bg.frames, 0)
         bgFrames.push(bgFrames.shift())
     }
         
     bgFrames[0].move(-100, 0)
-    bgFrames[1].moveTo(bgFrames[0].pos.x + gameSettings.bg.width * 2, 0)
+    bgFrames[1].moveTo(bgFrames[0].pos.x + gameSettings.bg.width * gameSettings.bg.frames, 0)
 }
 
 export const parallaxBgPeices = [
