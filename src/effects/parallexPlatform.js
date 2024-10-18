@@ -17,14 +17,14 @@ export function platformParallaxSecondFrame() {
     ])
 }
 
-export function platformUpdate(platformFrames) {
+export function platformUpdate(platformFrames, gameSpeed) {
     if (platformFrames[1].pos.x < 0) {
-        platformFrames[0].moveTo(platformFrames[1].pos.x + gameSettings.platform.width * gameSettings.platform.frames, 450)
+        platformFrames[0].moveTo(platformFrames[1].pos.x + platformFrames[1].width * gameSettings.platform.frames, 450)
         platformFrames.push(platformFrames.shift())
     }
         
-    platformFrames[0].move(-4000, 0)
-    platformFrames[1].moveTo(platformFrames[0].pos.x + gameSettings.platform.width * gameSettings.platform.frames, 450)
+    platformFrames[0].move(-gameSpeed, 0)
+    platformFrames[1].moveTo(platformFrames[0].pos.x + platformFrames[1].width * gameSettings.platform.frames, 450)
 }
 
 export const parallaxPlatformPeices = [
