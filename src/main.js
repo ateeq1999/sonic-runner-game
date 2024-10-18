@@ -8,6 +8,6 @@ spritesLoader()
 
 k.scene("main-menu", mainMenu)
 k.scene("game", game)
-k.scene("game-over", gameOver)
+k.scene("gameover", gameOver)
 
 k.go("main-menu")

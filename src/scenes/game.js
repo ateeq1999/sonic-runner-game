@@ -7,6 +7,7 @@ import k from '../kaplayCtx'
 import gameSettings from '../utils'
 
 export default function game() {
+    const citySfx = k.play("city", { volume: 0.2, loop: true });
     k.setGravity(3100)
 
     const bgPieces = [
@@ -19,6 +20,20 @@ export default function game() {
         platformParallaxSecondFrame(),
     ]
 
+    const controlsText = k.add([
+        k.text("Press Space/Click/Touch to Jump!", {
+            font: "mania",
+            size: 64,
+        }),
+        k.anchor("center"),
+        k.pos(k.center()),
+    ]);
+
+    const dismissControlsAction = k.onButtonPress("jump", () => {
+        k.destroy(controlsText);
+        dismissControlsAction.cancel();
+    });
+
     let score = 0
     let scoreMultiplier = 0
 
@@ -27,7 +42,7 @@ export default function game() {
         k.pos(20, 20),
     ])
 
-    let gameSpeed = 300
+    let gameSpeed = 200
 
     k.loop(1, () => {
         gameSpeed += 50
@@ -57,46 +72,59 @@ export default function game() {
             k.destroy(enemy)
             sonic.play("jump")
             sonic.jump()
-            spawnMotoBug()
+            scoreMultiplier += 1
+            score += 10 * scoreMultiplier
+            scoreText.text = `SCORE : ${score}`
+            if (scoreMultiplier === 1)
+                sonic.ringCollectUI.text = `+${10 * scoreMultiplier}`;
+            if (scoreMultiplier > 1) sonic.ringCollectUI.text = `x${scoreMultiplier}`;
+            k.wait(1, () => {
+                sonic.ringCollectUI.text = "";
+            });
             return
         }
 
         k.play("hurt", { volume: 0.5 })
-        k.go("game-over")
+        k.setData("current-score", score);
+        k.go("gameover", citySfx);
     })
     sonic.onCollide("ring", (ring) => {
         k.play("ring", { volume: 0.5 })
         k.destroy(ring)
         score++
         scoreText.text = `SCORE : ${score}`
+        sonic.ringCollectUI.text = "+1";
+        k.wait(1, () => {
+            sonic.ringCollectUI.text = "";
+        });
     })
 
     const spawnMotoBug = () => {
-        const motobug = makeMotobug(k.vec2(1900, 773))
+        const motobug = makeMotobug(k.vec2(1950, 773));
 
         motobug.onUpdate(() => {
             if (gameSpeed < 3000) {
-                motobug.move(-(gameSpeed + 300), 0)
-                return
+                motobug.move(-(gameSpeed + 300), 0);
+                return;
             }
-
-            motobug.move(-gameSpeed, 0)
-        })
+            motobug.move(-gameSpeed, 0);
+        });
 
         motobug.onExitScreen(() => {
             if (motobug.pos.x < 0) k.destroy(motobug);
+        });
 
-            const waitTime = k.rand(0.5, 3)
+        const waitTime = k.rand(0.5, 2.5);
 
-            k.wait(waitTime, spawnMotoBug)
-        })
-    }
+        k.wait(waitTime, spawnMotoBug);
+    };
 
-    spawnMotoBug()
+    spawnMotoBug();
 
     const spawnRing = () => {
-        const ring = makeRing(k.vec2(1950, 745));
-        
+        const rand = k.rand(0, 180)
+        const ring = makeRing(k.vec2(1950, 745 - rand));
+
         ring.onUpdate(() => {
             ring.move(-gameSpeed, 0);
         });
@@ -113,6 +141,7 @@ export default function game() {
     spawnRing();
 
     k.onUpdate(() => {
+        if (sonic.isGrounded()) scoreMultiplier = 0;
         platformUpdate(platforms, gameSpeed)
         bgUpdate(bgPieces)
     })
